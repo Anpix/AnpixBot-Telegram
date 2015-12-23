@@ -1,2 +1,2 @@
 # AnpixBot-Telegram
-A Telegram Bot called Anpix
+Um bot do Telegram que resume os assuntos do grupo, com base na quantidade de mensagens "perdidas"
