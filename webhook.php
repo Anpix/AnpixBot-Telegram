@@ -1,17 +1,21 @@
 <?php 
-define('BOT_TOKEN', 'COLOQUE O SEU TOKEN AQUI'); 
+
+require_once 'config.php';
+
+define('BOT_TOKEN', $bot_token); 
 define('API_URL', 'https://api.telegram.org/bot'.BOT_TOKEN.'/'); 
-function apiRequestWebhook($method, $parameters) {
-	if (!is_string($method)) {
-		error_log("Nome do método deve ser uma string\n"); 
-		return false; 
-	} 
-	if (!$parameters) {
-		$parameters = array(); 
-	} else if (!is_array($parameters)) {
-		error_log("Os parâmetros devem ser um array\n"); 
-		return false; 
-	} 
+
+function apiRequestWebhook($method, $parameters) { 
+    if (!is_string($method)) { 
+        error_log("Nome do método deve ser uma string\n"); 
+        return false; 
+    } 
+    if (!$parameters) { 
+        $parameters = array(); 
+    } else if (!is_array($parameters)) { 
+        error_log("Os parâmetros devem ser um array\n"); 
+        return false; 
+    }
 	$parameters["method"] = $method; 
 	header("Content-Type: application/json"); 
 	echo json_encode($parameters); 
@@ -92,53 +96,31 @@ function apiRequestJson($method, $parameters) {
 	curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json")); 
 	return exec_curl_request($handle); 
 } 
+
 function processMessage($message) {
 	// process incoming message 
-	$message_id = $message['message_id'];
-	$chat_id = $message['chat']['id']; 
-	$user_name = $message['from']['first_name'];
-	$member_name = $message['new_chat_participant']['first_name'];
-	$member_user = $message['new_chat_participant']['username'];
-	if (isset($member_name)) {
-		if ($member_user != 'BoasVindasBot') {
-			$falas = array('Olá', 'Opa', 'Salve salve', 'Fala aí', );
-			$keys = array_keys($falas);
-			suffle($keys);
-			$fala = array_rand($keys);
-			apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $falas[$fala] . ' ' . $member_name . "! \nSeja bem vindo(a) ao grupo!")); 
-		} else {
-			apiRequest("sendMessage", array('chat_id' => $chat_id, 'text' => "Olá, eu sou o @BoasVindasBot.\nQuando este grupo receber um novo membro, darei boas vindas a ele 😉"));
-		}
-	}
-	if (isset($message['text'])) {
-		$text = $message['text']; 
-		if (strpos($text, "/start") === 0) {
-			$type = $message['chat']['type'];
-			if($type == 'private') {
-				apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "Vamos começar?\nPara que eu possa receber os novos membros em seu grupo, basta me adicionar lá 😄")); 
-			} else {
-				apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "Você já me adicionou aqui 😄\nSempre que um novo membro entrar, darei boas vindas a ele.")); 
-			}
-		} else if (stripos($text, "puta")) {
-			apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "Sua mãe que é uma puta! Quer cair na mão? Perdeu a noção do perigo?")); 
-		} else if (stripos($text, "koee") || stripos($text, "falae") || stripos($text, "blz") || stripos($text, "beleza") || stripos($text, "bem")) {
-			apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "Koee, ". $user_name."\nBeleza?")); 
-		}
-	}
+	require_once 'resumao.php';
 } 
-define('WEBHOOK_URL', 'https://SEU LINK AQUI');
+
+define('WEBHOOK_URL', $bot_webhook);
+
 if (php_sapi_name() == 'cli') {
   // if run from console, set or delete webhook
   apiRequest('setWebhook', array('url' => isset($argv[1]) && $argv[1] == 'delete' ? '' : WEBHOOK_URL));
   exit;
 }
+
+
 $content = file_get_contents("php://input"); 
 $update = json_decode($content, true); 
+
 if (!$update) {
 	// receive wrong update, must not happen 
 	exit; 
 } 
+
 if (isset($update["message"])) {
 	processMessage($update["message"]); 
 }
+
 ?>

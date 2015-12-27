@@ -1,0 +1,22 @@
+        1) Capturar mensagens;
+[OK] [OFF]  1.1 - Filtrar essas mensagens que tenham a hashtag #importante;
+            1.2 - Armazenar as mensagens fitlradas no banco, sabendo o grupo, a pessoa que enviou e a data que foi enviada;
+            1.x - 
+
+        2) Chamadas do Bot;
+            2.1 - detectar quando é para guardar a mensagem;
+            2.2 - detectar quando é para retornar o resumo;
+            2.x - 
+        
+        3) Elaborar resumo;
+            3.1 - Pegar o parâmetro da data de início do resumo;
+            3.2 - Buscar as msg no banco, a partir dessa data;
+            3.3 - Procurar palavras chaves, e relacionar as mensagens;
+            3.x - 
+            
+        
+        4) Retornar o resumo;
+            Dúvida: Retornar dentro do grupo? ou no privado
+            4.1 - Para enviar, o usuário tem que abrir uma mensagem com o bot. Temos que força-lo a fazer isso.
+            
+        
